@@ -1,0 +1,11 @@
+{
+    "title": "Hot Cross Words",
+    "words": [
+      [3, 2, "across", "words"],
+      [1, 4, "across", "amusing"],
+      [0, 9, "across", "appetizing"],
+      [4, 0, "down", "cross"],
+      [1, 2, "down", "heatedup"],
+      [7, 2, "down", "sugar"]
+    ]
+}
