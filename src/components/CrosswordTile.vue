@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{ 'crossword-tile': true, 'word-focus': wordfocus }"
-    :style="`--coord-x: ${x}px; --coord-y: ${y}px`"
+    :style="`--coord-x: ${x}; --coord-y: ${y}; --start-x: ${start[0]}; --start-y: ${start[1]};`"
     tabindex="0"
     ref="elem"
     @mousedown="
@@ -33,6 +33,7 @@ export default {
     "x",
     "y",
     "letter",
+    "puzzleSize",
     "registerTile",
     "stealFocus",
     "focusNext",
@@ -40,7 +41,13 @@ export default {
     "backspace",
   ],
   data() {
-    return { alpha: /^[A-Za-z]$/, value: "", wordfocus: false };
+    // create ring starting locations
+    let puzzleCenter = this.puzzleSize.map((s) => (s - 1) / 2);
+    let ang = Math.atan2(this.y - puzzleCenter[0], this.x - puzzleCenter[1]);
+    let start = [Math.cos, Math.sin].map(
+      (f, i) => puzzleCenter[i] + f(ang) * (this.puzzleSize[i] / 3)
+    );
+    return { alpha: /^[A-Za-z]$/, value: "", wordfocus: false, start };
   },
   methods: {
     focus() {
@@ -54,18 +61,33 @@ export default {
 </script>
 
 <style>
+@keyframes explode-tiles {
+  0% {
+    left: calc(50% - var(--tile-unit) / 2);
+    top: calc(50% - var(--tile-unit) / 2);
+    transform: rotate(-240deg);
+  }
+  60% {
+    left: calc(var(--start-x) * var(--tile-unit) - 1px);
+    top: calc(var(--start-y) * var(--tile-unit) - 1px);
+  }
+  100% {
+    left: calc(var(--coord-x) * var(--tile-unit) - 1px);
+    top: calc(var(--coord-y) * var(--tile-unit) - 1px);
+  }
+}
+
 .crossword-tile {
   position: absolute;
-  left: calc(var(--coord-x) * 50 - 1px);
-  top: calc(var(--coord-y) * 50 - 1px);
   background: white;
   border: 1px solid black;
-  width: 49px;
-  height: 49px;
-  line-height: 50px;
-  font-size: 40px;
+  width: calc(var(--tile-unit) - 1px);
+  height: calc(var(--tile-unit) - 1px);
+  font-size: calc(var(--tile-unit) * 0.75);
   overflow: hidden;
   display: inline-block;
+  animation: explode-tiles 0.5s ease-out;
+  animation-fill-mode: both;
 }
 
 .crossword-tile.word-focus {

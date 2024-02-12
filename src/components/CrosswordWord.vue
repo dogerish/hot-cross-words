@@ -3,6 +3,7 @@
     :x="getTileX(i)"
     :y="getTileY(i)"
     :letter="letter"
+    :puzzleSize="puzzleSize"
     :registerTile="registerTile"
     :stealFocus="stealFocus"
     :focusNext="focusNext"
@@ -23,6 +24,7 @@ export default {
     "y",
     "across",
     "word",
+    "puzzleSize",
     "registerWord",
     "getTile",
     "stealFocus",

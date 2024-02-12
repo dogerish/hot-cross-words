@@ -1,20 +1,26 @@
 <template>
   <h1>Crossword Puzzle: {{ puzzle.title }}</h1>
-  <div id="puzzle">
-    <CrosswordWord
-      :x="word[0]"
-      :y="word[1]"
-      :across="word[2] == 'across'"
-      :word="word[3]"
-      :registerWord="registerWord"
-      :getTile="getTile"
-      :stealFocus="stealFocus"
-      :focusNext="focusNext"
-      :focusTo="focusTo"
-      :backspace="backspace"
-      :key="i"
-      v-for="(word, i) in puzzle.words"
-    />
+  <div
+    id="puzzle"
+    :style="`--tile-unit: 3rem; --puzzle-width: ${puzzleSize[0]}; --puzzle-height: ${puzzleSize[1]}`"
+  >
+    <div id="tiles">
+      <CrosswordWord
+        :x="word[0]"
+        :y="word[1]"
+        :across="word[2] === 'across'"
+        :word="word[3]"
+        :puzzleSize="puzzleSize"
+        :registerWord="registerWord"
+        :getTile="getTile"
+        :stealFocus="stealFocus"
+        :focusNext="focusNext"
+        :focusTo="focusTo"
+        :backspace="backspace"
+        :key="i"
+        v-for="(word, i) in puzzle.words"
+      />
+    </div>
   </div>
 </template>
 
@@ -28,7 +34,24 @@ export default {
     CrosswordWord,
   },
   data() {
-    return { focused: null, focusedWord: null, across: [], down: [] };
+    // calculate puzzle dimensions
+    let puzzleSize = [0, 0];
+    for (let word of this.puzzle.words) {
+      if (word[2] === "across") {
+        if (word[0] + word[3].length > puzzleSize[0])
+          puzzleSize[0] = word[0] + word[3].length;
+      } else {
+        if (word[1] + word[3].length > puzzleSize[1])
+          puzzleSize[1] = word[1] + word[3].length;
+      }
+    }
+    return {
+      focused: null,
+      focusedWord: null,
+      across: [],
+      down: [],
+      puzzleSize,
+    };
   },
   methods: {
     registerWord(word) {
@@ -36,6 +59,7 @@ export default {
       else this.down.push(word);
     },
     getTile(x, y) {
+      // get the tile found at (x, y)
       for (let word of this.across) {
         if (y !== word.y || x < word.x || x >= word.x + word.word.length)
           continue;
@@ -103,14 +127,27 @@ export default {
 <style>
 #puzzle {
   position: relative;
-  width: 499px;
-  height: 499px;
+  width: calc(var(--puzzle-width) * var(--tile-unit) - 1px);
+  height: calc(var(--puzzle-width) * var(--tile-unit) - 1px);
   background: gray;
   margin: auto;
   outline: 1px solid black;
+  overflow: hidden;
 }
 
-.puzzle-row {
-  line-height: 0;
+@keyframes spin-puzzle {
+  0% {
+    transform: rotate(240deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+#tiles {
+  width: 100%;
+  height: 100%;
+  animation: spin-puzzle 0.5s ease-out;
+  animation-fill-mode: both;
 }
 </style>
