@@ -1,11 +1,13 @@
 <template>
   <CrosswordTile
-    :x="getX(i)"
-    :y="getY(i)"
+    :x="getTileX(i)"
+    :y="getTileY(i)"
     :letter="letter"
     :registerTile="registerTile"
-    :focused="focused"
     :stealFocus="stealFocus"
+    :focusNext="focusNext"
+    :focusTo="focusTo"
+    :backspace="backspace"
     :key="i"
     v-for="[i, letter] in letters"
   />
@@ -23,8 +25,10 @@ export default {
     "word",
     "registerWord",
     "getTile",
-    "focused",
     "stealFocus",
+    "focusNext",
+    "focusTo",
+    "backspace",
   ],
   components: {
     CrosswordTile,
@@ -41,15 +45,24 @@ export default {
     return { tiles, letters };
   },
   methods: {
-    getX(i) {
+    getTileX(i) {
       return this.x + this.across * i;
     },
-    getY(i) {
+    getTileY(i) {
       return this.y + !this.across * i;
+    },
+    getTileI(x, y) {
+      return x - this.x + y - this.y;
     },
     registerTile(tile, i) {
       if (i === undefined) i = this.tiles.indexOf(null);
       this.tiles[i] = tile;
+    },
+    focusWord() {
+      for (let tile of this.tiles) tile.wordfocus = true;
+    },
+    unfocusWord() {
+      for (let tile of this.tiles) tile.wordfocus = false;
     },
   },
   created() {
