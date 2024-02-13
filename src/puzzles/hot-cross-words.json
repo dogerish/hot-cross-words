@@ -1,11 +1,12 @@
 {
     "title": "Hot Cross Words",
     "words": [
-      [3, 2, "across", "words"],
-      [1, 4, "across", "amusing"],
-      [0, 9, "across", "appetizing"],
-      [4, 0, "down", "cross"],
-      [1, 2, "down", "heatedup"],
-      [7, 2, "down", "sugar"]
+      [4, 0, "down", "cross", "Railroad ____ing"],
+      [1, 2, "down", "heatedup", "A bun becomes this when it is put in the oven"],
+      [7, 2, "down", "sugar", "Common item in baking, especially pastries"],
+      [4, 0, "across", "cookies", "Enjoyed by both websites and people"],
+      [3, 2, "across", "words", "Common in crossword puzzles"],
+      [1, 4, "across", "amusing", "Entertaining, sparking happiness"],
+      [0, 9, "across", "appetizing", "Makes you want to eat"]
     ]
 }
