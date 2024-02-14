@@ -4,13 +4,13 @@
     :x="getTileX(i)"
     :y="getTileY(i)"
     :letter="letter"
-    :registerTile="registerTile"
+    :gradeMode="gradeMode"
     :stealFocus="stealFocus"
-    :stealWordFocus="stealWordFocus"
     :focusNext="focusNext"
     :focusTo="focusTo"
     :backspace="backspace"
     :key="i"
+    :ref="(tile) => (tiles[i] = tile)"
     v-for="[i, letter] in letters"
   />
 </template>
@@ -27,7 +27,7 @@ export default {
     "across",
     "word",
     "clue",
-    "registerWord",
+    "gradeMode",
     "getTile",
     "stealFocus",
     "stealWordFocus",
@@ -48,7 +48,29 @@ export default {
       if (i === 0) tile.setNum(this.num);
       return false;
     });
-    return { tiles, letters, isfocused: false };
+    return { tiles, letters, focused: false, showGrade: 0 };
+  },
+  computed: {
+    value() {
+      return this.tiles.reduce((a, v) => a + v.value, "");
+    },
+    gradeworthy() {
+      return (
+        this.showGrade > 0 ||
+        (this.gradeMode === 1 && this.value.length === this.word.length)
+      );
+    },
+    correct() {
+      return this.value === this.word;
+    },
+  },
+  watch: {
+    gradeworthy: {
+      handler(gradeworthy) {
+        if (gradeworthy) this.tiles.forEach((tile) => tile.grade());
+        else this.tiles.forEach((tile) => tile.ungrade());
+      },
+    },
   },
   methods: {
     getTileX(i) {
@@ -73,25 +95,25 @@ export default {
         y <= this.y + !this.across * (this.word.length - 1)
       );
     },
-    registerTile(tile, i) {
-      if (i === undefined) i = this.tiles.indexOf(null);
-      this.tiles[i] = tile;
-    },
     focus() {
       this.stealWordFocus(this);
       this.tiles[0].focus();
     },
     focusWord() {
       for (let tile of this.tiles) tile.wordfocus = true;
-      this.isfocused = true;
+      this.focused = true;
     },
     unfocusWord() {
       for (let tile of this.tiles) tile.wordfocus = false;
-      this.isfocused = false;
+      this.focused = false;
     },
-  },
-  created() {
-    this.registerWord(this);
+    grade() {
+      this.showGrade++;
+    },
+    ungrade() {
+      if (this.showGrade === 0) return;
+      this.showGrade--;
+    },
   },
 };
 </script>
