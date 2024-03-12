@@ -156,10 +156,6 @@ export default {
   text-decoration: line-through;
 }
 
-.gradeworthy.correct {
-  background: var(--subject-3);
-}
-
 .focusable-tile.word-focus {
   background: var(--subject-2);
 }

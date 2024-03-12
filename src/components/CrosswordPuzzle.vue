@@ -4,6 +4,19 @@
     :style="`--puzzle-width: ${size[0]}; --puzzle-height: ${size[1]}`"
     :class="{ correct }"
   >
+    <div id="fireworks" v-if="correct">
+      <FireworkRocket
+        :size="`${Math.random() * 3 + 5}px`"
+        :color="
+          fireworkColors[Math.floor(Math.random() * fireworkColors.length)]
+        "
+        :delay="`${i * 0.25}s`"
+        :launchX="`${Math.random() * 80 + 10}%`"
+        :burstY="`${Math.random() * 60 + 25}%`"
+        v-for="i in 20"
+        :key="i"
+      />
+    </div>
     <CrosswordWord
       :num="word.num"
       :x="word.x"
@@ -27,12 +40,14 @@
 
 <script>
 import CrosswordWord from "@/components/CrosswordWord.vue";
+import FireworkRocket from "@/components/FireworkRocket.vue";
 
 export default {
   name: "CrosswordPuzzle",
   props: ["rawWords", "gradeMode"],
   components: {
     CrosswordWord,
+    FireworkRocket,
   },
   data() {
     // calculate puzzle dimensions
@@ -43,6 +58,17 @@ export default {
       size[i] = Math.max(extent, size[i]);
     }
     return {
+      fireworkColors: [
+        "red",
+        "orange",
+        "yellow",
+        "limegreen",
+        "turquoise",
+        "blue",
+        "magenta",
+        "pink",
+        "white",
+      ],
       words: [],
       focused: null,
       focusedWord: null,
